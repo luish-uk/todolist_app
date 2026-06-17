@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Todos{
+pub struct Todos{
     todos: Vec<String>,
     marks: Vec<bool>,
 }
@@ -66,10 +66,12 @@ impl Todos{
 
 
 
+
 pub fn main() {
     let todos_filename: &str = "todos.txt";
     let mut todos = Todos::new();
     let _ = todos.load(todos_filename, 0);
+    
     let _ = todos.add("smth".to_string());
 
     todos.remove(2);

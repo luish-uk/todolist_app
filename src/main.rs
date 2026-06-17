@@ -1,19 +1,20 @@
+use color_eyre::{
+    eyre::{bail, WrapErr},
+    Result,
+};
 
-use std::io;
+use app::App;
 
-mod main_txt;
-mod main_json;
+use tests::test;
 
-fn main() {
-    let mut var = String::new();
-    println!("Choose a mode (txt or json)?");
-    io::stdin().read_line(&mut var);
-    let var = var.trim();
-    if var == "txt" {
-        main_txt::main();
-    } else if var == "json" {
-        main_json::main();
-    } else {
-        println!("Sorry, incorrect input, please enter txt or json");
-    }
+
+
+fn main() -> Result<()> {
+    color_eyre::install()?;
+    let mut terminal = ratatui::init();
+    let app_result = App::default().run(&mut terminal);
+    ratatui::restore();
+    app_result
 }
+
+
