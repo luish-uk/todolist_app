@@ -9,7 +9,7 @@ use ratatui::{
     DefaultTerminal, Frame,
 };
 
-use app::App;
+use crate::app::App;
 
 
 #[cfg(test)]

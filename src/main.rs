@@ -1,13 +1,14 @@
+mod app;
+mod tests;
+
 use color_eyre::{
     eyre::{bail, WrapErr},
     Result,
 };
 
+
+
 use app::App;
-
-use tests::test;
-
-
 
 fn main() -> Result<()> {
     color_eyre::install()?;

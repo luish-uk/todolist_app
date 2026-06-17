@@ -9,6 +9,11 @@ use ratatui::{
     DefaultTerminal, Frame,
 };
 
+use color_eyre::{
+    eyre::{bail, WrapErr},
+    Result,
+};
+
 // default function is not overriden
 #[derive(Debug, Default)]
 pub struct App {
