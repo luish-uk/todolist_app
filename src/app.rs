@@ -14,16 +14,30 @@ use color_eyre::{
     Result,
 };
 
+
+//use crate::jsontodos;
+use crate::json_todos::Todos;
+
+
+
+
+
 // default function is not overriden
 #[derive(Debug, Default)]
 pub struct App {
     counter: u8,
+    todos: Todos,
     exit: bool,
 }
+
+
+
+
+
 impl App {
     //
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> Result<()> {
-        while !self.exit {
+        while !self.exit{
             terminal.draw(|frame| self.draw(frame))?;
             self.handle_events().wrap_err("handle events failed")?;
         }
@@ -72,7 +86,7 @@ impl App {
 }
 
 impl Widget for &App {
-    fn render(self, area: Rect, buf: &mut Buffer) {
+    fn render(self, area: Rect, buf: &mut Buffer) { 
         let title = Line::from(" Counter App Tutorial ".bold());
         let instructions = Line::from(vec![
             " Decrement ".into(),
@@ -88,8 +102,7 @@ impl Widget for &App {
             .border_set(border::THICK);
 
         let counter_text = Text::from(vec![Line::from(vec![
-            "Value: ".into(),
-            self.counter.to_string().yellow(),
+            "smth smth".into(),
         ])]);
 
         Paragraph::new(counter_text)

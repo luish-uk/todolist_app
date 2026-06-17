@@ -5,12 +5,11 @@ use serde::{Deserialize, Serialize};
 
 
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Todos{
     todos: Vec<String>,
     marks: Vec<bool>,
 }
-
 
 impl Todos{
     pub fn new() -> Todos{
