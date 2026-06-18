@@ -5,12 +5,21 @@ use serde::{Deserialize, Serialize};
 
 
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, Serialize, Deserialize)]
 pub struct Todos{
     todos: Vec<String>,
     marks: Vec<bool>,
 }
 
+
+// impl Clone for Todos{
+//     fn clone(&self) -> Todos {
+//         Todos{
+//             todos: self.todos.clone(),
+//             marks: self.marks.clone(),
+//         }
+//     }
+// }
 
 impl Todos{
     pub fn new() -> Todos{
@@ -20,21 +29,27 @@ impl Todos{
         }
     }
 
+
+
     pub fn add(&mut self, text: String) -> Result<()>{
         self.todos.push(text);
         self.marks.push(false);
         Ok(())
     }
 
-    pub fn text_format(&mut self) -> String{
-        let mut formated: String = "".to_string();
+    pub fn text_format(self) -> String{
+        let mut formated = String::new();
         for i in 0..self.todos.len(){
-            formated+=format!("{}<{}> - {}\n", i+1, if self.marks[i] {"*"} else {" "}, self.todos[i]).as_str();
+            formated+=format!("{}<{}> - {}\n",
+                i+1,
+                if self.marks[i] {"*"} else {" "},
+                self.todos[i])
+            .as_str();
         }
         formated
     }
 
-    fn load(&mut self, filename: &str, mode: i32) -> Result<()>{
+    pub fn load(&mut self, filename: &str, mode: i32) -> Result<()>{
         let mut f = File::open(filename)?;
         let mut text = String::new();
         match f.read_to_string(&mut text) {
@@ -48,7 +63,7 @@ impl Todos{
         Ok(())
     }
 
-    fn save(&mut self, filename: &str) -> Result<()>{
+    pub fn save(&mut self, filename: &str) -> Result<()>{
         let j = serde_json::to_string(&self)?;
         
         let mut f = File::create(filename)?;

@@ -37,6 +37,8 @@ pub struct App {
 impl App {
     //
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> Result<()> {
+        self.todos.load("todos.txt", 0);
+
         while !self.exit{
             terminal.draw(|frame| self.draw(frame))?;
             self.handle_events().wrap_err("handle events failed")?;
@@ -100,13 +102,12 @@ impl Widget for &App {
             .title(title.centered())
             .title_bottom(instructions.centered())
             .border_set(border::THICK);
-
-        let counter_text = Text::from(vec![Line::from(vec![
-            "smth smth".into(),
-        ])]);
+        
+        
+        let counter_text = Text::from(self.todos.clone().text_format());
 
         Paragraph::new(counter_text)
-            .centered()
+            // .centered()
             .block(block)
             .render(area, buf);
     }
