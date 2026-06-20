@@ -1,1 +1,1 @@
-{"todos":["smth","smth","smth","smth","smth","smth"],"marks":[false,false,true,false,false,false]}
+{"todos":["smth","smth","smth","smth","smth","smth"],"marks":[false,false,false,false,true,true]}

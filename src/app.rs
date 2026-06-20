@@ -30,6 +30,7 @@ impl Default for MenuState {
 #[derive(Debug, Default)]
 pub struct App {
     todos: Todos,
+    filename: String,
     list_state: ListState,
     menu_state: MenuState,
     exit: bool,
@@ -42,7 +43,8 @@ pub struct App {
 impl App {
     //
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> Result<()> {
-        let _ = self.todos.load("todos.txt", 0);
+        self.filename = "todos.txt".to_string();
+        let _ = self.todos.load(&self.filename, 0);
 
         while !self.exit{
             terminal.draw(|frame| self.draw(frame))?;
@@ -89,6 +91,7 @@ impl App {
     }
 
     fn exit(&mut self) {
+        self.todos.save(&self.filename);
         self.exit = true;
     }
 }
@@ -104,7 +107,7 @@ impl App {
             "<Down>".blue().bold(),
             " flip marking ".into(),
             "<F> ".blue().bold(),
-            " Quit ".into(),
+            " Quit&Save ".into(),
             "<Q> ".blue().bold(),
         ]);
         let block = Block::bordered()
