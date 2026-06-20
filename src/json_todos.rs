@@ -1,4 +1,4 @@
-use std::{fs::{File, read_to_string}, io::{self, Error, Read, Result, Write}, path::Path};
+use std::{fs::{File}, io::{Read, Result, Write}};
 
 use serde::{Deserialize, Serialize};
 
@@ -29,15 +29,11 @@ impl Todos{
         }
     }
 
-
-
     pub fn add(&mut self, text: String) -> Result<()>{
         self.todos.push(text);
         self.marks.push(false);
         Ok(())
     }
-
-     
 
     pub fn list_format(self) -> Vec<String>{
         let mut list: Vec<String> = Vec::new();
@@ -96,25 +92,3 @@ impl Todos{
     }
 
 }
-
-
-
-
-
-pub fn main() {
-    let todos_filename: &str = "todos.txt";
-    let mut todos = Todos::new();
-    let _ = todos.load(todos_filename, 0);
-    
-    let _ = todos.add("smth".to_string());
-
-    todos.remove(2);
-
-    let _ = todos.save(todos_filename);
-
-    println!("{}", todos.text_format());
-
-    
-}
-
-   

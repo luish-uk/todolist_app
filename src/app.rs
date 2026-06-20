@@ -1,10 +1,10 @@
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
-    DefaultTerminal, Frame, buffer::Buffer, layout::Rect, style::{Modifier, Stylize}, symbols::border, text::{Line, Text}, widgets::{Block, List, ListState, Paragraph, StatefulWidget, Widget}
+    DefaultTerminal, Frame, buffer::Buffer, layout::Rect, style::{Modifier, Stylize}, symbols::border, text::{Line}, widgets::{Block, List, ListState, StatefulWidget}
 };
 
 use color_eyre::{
-    eyre::{bail, WrapErr},
+    eyre::{WrapErr},
     Result,
 };
 
