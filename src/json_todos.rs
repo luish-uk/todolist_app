@@ -62,6 +62,9 @@ impl Todos{
         }
         formated
     }
+    pub fn flip(&mut self, id: usize){
+        self.marks[id] ^= true; 
+    }
 
     pub fn load(&mut self, filename: &str, mode: i32) -> Result<()>{
         let mut f = File::open(filename)?;

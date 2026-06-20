@@ -1,3 +1,5 @@
+use std::default;
+
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
     DefaultTerminal, Frame, buffer::Buffer, layout::Rect, style::{Modifier, Stylize}, symbols::border, text::{Line}, widgets::{Block, List, ListState, StatefulWidget}
@@ -10,17 +12,26 @@ use color_eyre::{
 
 
 //use crate::jsontodos;
-use crate::json_todos::Todos;
+use crate::{app::MenuState::Edit, json_todos::Todos};
 
+#[derive(Debug)]
+enum MenuState{
+    Main,
+    Edit(usize),//FIXME: the name of this state will be changed
+}
 
-
-
+impl Default for MenuState {
+    fn default() -> Self {
+        MenuState::Main
+    }
+}
 
 // default function is not overriden
 #[derive(Debug, Default)]
 pub struct App {
     todos: Todos,
     list_state: ListState,
+    menu_state: MenuState,
     exit: bool,
 }
 
@@ -41,6 +52,14 @@ impl App {
     }
     
     fn draw(&mut self, frame: &mut Frame) {
+        match self.menu_state{
+            Edit(id) => {
+                self.todos.flip(id);
+                self.menu_state = MenuState::Main;
+                },
+            _ => {}
+            
+        }
         self.render(frame.area(), frame.buffer_mut());
     }
 
@@ -58,6 +77,12 @@ impl App {
             KeyCode::Char('q') => self.exit(),
             KeyCode::Up => self.list_state.select_previous(),
             KeyCode::Down => self.list_state.select_next(),
+            KeyCode::Char('f') => {
+                match self.list_state.selected() {
+                    Some(id) => self.menu_state = Edit(id.try_into().unwrap()),
+                    None => ()
+                }
+            },
             _ => {}
         }
         Ok(())
@@ -77,6 +102,8 @@ impl App {
             "<Up>".blue().bold(),
             "/".into(),
             "<Down>".blue().bold(),
+            " flip marking ".into(),
+            "<F> ".blue().bold(),
             " Quit ".into(),
             "<Q> ".blue().bold(),
         ]);
