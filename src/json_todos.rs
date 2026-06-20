@@ -37,6 +37,24 @@ impl Todos{
         Ok(())
     }
 
+     
+
+    pub fn list_format(self) -> Vec<String>{
+        let mut list: Vec<String> = Vec::new();
+        for i in 0..self.todos.len(){
+            let mut formated = String::new();
+            formated+=format!("{}<{}> - {}\n",
+                i+1,
+                if self.marks[i] {"*"} else {" "},
+                self.todos[i])
+            .as_str();
+            list.push(formated);
+        }
+        list
+    }
+
+
+
     pub fn text_format(self) -> String{
         let mut formated = String::new();
         for i in 0..self.todos.len(){

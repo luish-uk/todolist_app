@@ -1,5 +1,5 @@
 [package]
-name = "todolist_app2"
+name = "todolist_app"
 version = "0.1.0"
 description = "An example generated using the hello-world template"
 authors = ["luish-uk <luishernandezlg77@gmail.com>"]

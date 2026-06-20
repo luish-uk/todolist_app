@@ -1,12 +1,6 @@
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
-    buffer::Buffer,
-    layout::Rect,
-    style::Stylize,
-    symbols::border,
-    text::{Line, Text},
-    widgets::{Block, Paragraph, Widget},
-    DefaultTerminal, Frame,
+    DefaultTerminal, Frame, buffer::Buffer, layout::Rect, style::{Modifier, Stylize}, symbols::border, text::{Line, Text}, widgets::{Block, List, ListState, Paragraph, StatefulWidget, Widget}
 };
 
 use color_eyre::{
@@ -25,8 +19,8 @@ use crate::json_todos::Todos;
 // default function is not overriden
 #[derive(Debug, Default)]
 pub struct App {
-    counter: u8,
     todos: Todos,
+    list_state: ListState,
     exit: bool,
 }
 
@@ -37,7 +31,7 @@ pub struct App {
 impl App {
     //
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> Result<()> {
-        self.todos.load("todos.txt", 0);
+        let _ = self.todos.load("todos.txt", 0);
 
         while !self.exit{
             terminal.draw(|frame| self.draw(frame))?;
@@ -46,8 +40,8 @@ impl App {
         Ok(())
     }
     
-    fn draw(&self, frame: &mut Frame) {
-        frame.render_widget(self, frame.area());
+    fn draw(&mut self, frame: &mut Frame) {
+        self.render(frame.area(), frame.buffer_mut());
     }
 
     fn handle_events(&mut self) -> Result<()> {
@@ -62,8 +56,8 @@ impl App {
     fn handle_key_event(&mut self, key_event: KeyEvent) -> Result<()> {
         match key_event.code {
             KeyCode::Char('q') => self.exit(),
-            KeyCode::Left => self.decrement_counter()?,
-            KeyCode::Right => self.increment_counter()?,
+            KeyCode::Up => self.list_state.select_previous(),
+            KeyCode::Down => self.list_state.select_next(),
             _ => {}
         }
         Ok(())
@@ -72,29 +66,17 @@ impl App {
     fn exit(&mut self) {
         self.exit = true;
     }
-
-    fn increment_counter(&mut self) -> Result<()> {
-        self.counter += 1;
-        if self.counter > 2 {
-            bail!("counter overflow");
-        }
-        Ok(())
-    }
-
-    fn decrement_counter(&mut self) -> Result<()> {
-        self.counter -= 1;
-        Ok(())
-    }
 }
 
-impl Widget for &App {
-    fn render(self, area: Rect, buf: &mut Buffer) { 
+impl App {
+    fn render(&mut self, area: Rect, buf: &mut Buffer) { 
+        
         let title = Line::from(" Counter App Tutorial ".bold());
         let instructions = Line::from(vec![
-            " Decrement ".into(),
-            "<Left>".blue().bold(),
-            " Increment ".into(),
-            "<Right>".blue().bold(),
+            " moving selection ".into(),
+            "<Up>".blue().bold(),
+            "/".into(),
+            "<Down>".blue().bold(),
             " Quit ".into(),
             "<Q> ".blue().bold(),
         ]);
@@ -104,12 +86,17 @@ impl Widget for &App {
             .border_set(border::THICK);
         
         
-        let counter_text = Text::from(self.todos.clone().text_format());
 
-        Paragraph::new(counter_text)
-            // .centered()
-            .block(block)
-            .render(area, buf);
+        let list  = List::new(self.todos.clone().list_format());
+      
+        StatefulWidget::render(
+            list
+                .block(block)
+                .highlight_style(Modifier::REVERSED),
+            area,
+            buf,
+            &mut self.list_state,
+        );
     }
 }
 
