@@ -1,8 +1,8 @@
 mod app;
+mod json_todos;
 mod tests;
 
 use color_eyre::{
-    eyre::{bail, WrapErr},
     Result,
 };
 

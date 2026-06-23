@@ -1,15 +1,25 @@
-use std::{fs::{File, read_to_string}, io::{self, Error, Read, Result, Write}, path::Path};
+use std::{fs::{File}, io::{Read, Result, Write}};
 
 use serde::{Deserialize, Serialize};
 
 
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, Serialize, Deserialize)]
 pub struct Todos{
     todos: Vec<String>,
     marks: Vec<bool>,
 }
+
+
+// impl Clone for Todos{
+//     fn clone(&self) -> Todos {
+//         Todos{
+//             todos: self.todos.clone(),
+//             marks: self.marks.clone(),
+//         }
+//     }
+// }
 
 impl Todos{
     pub fn new() -> Todos{
@@ -25,15 +35,38 @@ impl Todos{
         Ok(())
     }
 
-    pub fn text_format(&mut self) -> String{
-        let mut formated: String = "".to_string();
+    pub fn list_format(self) -> Vec<String>{
+        let mut list: Vec<String> = Vec::new();
         for i in 0..self.todos.len(){
-            formated+=format!("{}<{}> - {}\n", i+1, if self.marks[i] {"*"} else {" "}, self.todos[i]).as_str();
+            let mut formated = String::new();
+            formated+=format!("{}<{}> - {}\n",
+                i+1,
+                if self.marks[i] {"*"} else {" "},
+                self.todos[i])
+            .as_str();
+            list.push(formated);
+        }
+        list
+    }
+
+
+
+    pub fn text_format(self) -> String{
+        let mut formated = String::new();
+        for i in 0..self.todos.len(){
+            formated+=format!("{}<{}> - {}\n",
+                i+1,
+                if self.marks[i] {"*"} else {" "},
+                self.todos[i])
+            .as_str();
         }
         formated
     }
+    pub fn flip(&mut self, id: usize){
+        self.marks[id] ^= true; 
+    }
 
-    fn load(&mut self, filename: &str, mode: i32) -> Result<()>{
+    pub fn load(&mut self, filename: &str, mode: i32) -> Result<()>{
         let mut f = File::open(filename)?;
         let mut text = String::new();
         match f.read_to_string(&mut text) {
@@ -47,7 +80,7 @@ impl Todos{
         Ok(())
     }
 
-    fn save(&mut self, filename: &str) -> Result<()>{
+    pub fn save(&mut self, filename: &str) -> Result<()>{
         let j = serde_json::to_string(&self)?;
         
         let mut f = File::create(filename)?;
@@ -62,25 +95,3 @@ impl Todos{
     }
 
 }
-
-
-
-
-
-pub fn main() {
-    let todos_filename: &str = "todos.txt";
-    let mut todos = Todos::new();
-    let _ = todos.load(todos_filename, 0);
-    
-    let _ = todos.add("smth".to_string());
-
-    todos.remove(2);
-
-    let _ = todos.save(todos_filename);
-
-    println!("{}", todos.text_format());
-
-    
-}
-
-   
